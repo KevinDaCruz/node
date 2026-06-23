@@ -1,6 +1,7 @@
-import express from 'express';
+import express from "express";
 import { PrismaClient } from "./generated/prisma/client.js";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import router from "./app/routes/index.js";
 
 const app = express();
 
@@ -14,12 +15,11 @@ const adapter = new PrismaMariaDb({
 });
 
 export const prisma = new PrismaClient({ adapter });
-prisma.$connect()
+prisma
+  .$connect()
   .then(() => console.log("Database connected..."))
   .catch((err) => console.log(err));
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+app.use("/api", router);
 
 export default app;
