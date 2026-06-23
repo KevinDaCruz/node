@@ -1,6 +1,9 @@
 import { prisma } from "../app.js";
+import bcrypt from "bcrypt";
 
 async function main() {
+  const passwordHash = await bcrypt.hash("password123", 10);
+
   await prisma.user.upsert({
     where: { email: "john.doe@example.com" },
     update: {},
@@ -8,7 +11,7 @@ async function main() {
       firstName: "John",
       lastName: "Doe",
       email: "john.doe@example.com",
-      password: "password123",
+      password: passwordHash,
     },
   });
 

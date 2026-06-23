@@ -1,9 +1,14 @@
 import { prisma } from "../../app.js";
+import bcrypt from "bcrypt";
 
 export const signup = async (req, res) => {
   try {
+    const passwordHash = await bcrypt.hash(req.body.password, 10);
     const user = await prisma.user.create({
-      data: req.body,
+      data: {
+        ...req.body,
+        password: passwordHash,
+      },
     });
     res.status(201).json(user);
   } catch (error) {
