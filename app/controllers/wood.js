@@ -26,3 +26,26 @@ export const readByHardness = async (req, res) => {
     });
   }
 };
+
+export const create = async (req, res) => {
+  try {
+    let pathname;
+    if (req.file) {
+      pathname = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    }
+
+    const data = req.body.datas ? JSON.parse(req.body.datas) : req.body;
+
+    const wood = await prisma.wood.create({
+      data: {
+        ...data,
+        ...(pathname ? { image: pathname } : {}),
+      },
+    });
+    res.status(201).json(wood);
+  } catch (error) {
+    res.status(500).json({
+      error: error?.message || "An error occurred while creating wood",
+    });
+  }
+};
