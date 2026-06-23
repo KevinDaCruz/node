@@ -1,5 +1,5 @@
 import express from "express";
-const router = express();
+const router = express.Router();
 import * as userController from "../controllers/user.js";
 
 router.post("/signup", userController.signup);
