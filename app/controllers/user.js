@@ -38,11 +38,9 @@ export const login = async (req, res) => {
       return res.status(401).json({ error: "Invalid password" });
     }
 
-    const token = jwt.sign(
-      { id: user.id },
-      process.env.TOKEN_SECRET || "default_secret",
-      { expiresIn: "24h" },
-    );
+    const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET, {
+      expiresIn: "24h",
+    });
 
     res.status(200).json({
       token,
