@@ -3,7 +3,21 @@ import { prisma } from "../../app.js";
 export const readAll = async (req, res) => {
   try {
     const woods = await prisma.wood.findMany();
-    res.status(200).json(woods);
+    const woodsWithLinks = woods.map((wood) => {
+      const baseUrl = `${req.protocol}://${req.get("host")}/api/woods/${wood.id}`;
+      return {
+        ...wood,
+        links: [
+          { rel: "self", method: "GET", href: baseUrl },
+          {
+            rel: "sameHardness",
+            method: "GET",
+            href: `${req.protocol}://${req.get("host")}/api/woods/${wood.hardness}`,
+          },
+        ],
+      };
+    });
+    res.status(200).json(woodsWithLinks);
   } catch (error) {
     res.status(500).json({
       error: error?.message || "An error occurred while fetching woods",
@@ -18,7 +32,21 @@ export const readByHardness = async (req, res) => {
         hardness: req.params.hardness,
       },
     });
-    res.status(200).json(woods);
+    const woodsWithLinks = woods.map((wood) => {
+      const baseUrl = `${req.protocol}://${req.get("host")}/api/woods/${wood.id}`;
+      return {
+        ...wood,
+        links: [
+          { rel: "self", method: "GET", href: baseUrl },
+          {
+            rel: "sameHardness",
+            method: "GET",
+            href: `${req.protocol}://${req.get("host")}/api/woods/${wood.hardness}`,
+          },
+        ],
+      };
+    });
+    res.status(200).json(woodsWithLinks);
   } catch (error) {
     res.status(500).json({
       error:
@@ -42,7 +70,19 @@ export const create = async (req, res) => {
         ...(pathname ? { image: pathname } : {}),
       },
     });
-    res.status(201).json(wood);
+
+    const baseUrl = `${req.protocol}://${req.get("host")}/api/woods/${wood.id}`;
+    res.status(201).json({
+      ...wood,
+      links: [
+        { rel: "self", method: "GET", href: baseUrl },
+        {
+          rel: "sameHardness",
+          method: "GET",
+          href: `${req.protocol}://${req.get("host")}/api/woods/${wood.hardness}`,
+        },
+      ],
+    });
   } catch (error) {
     res.status(500).json({
       error: error?.message || "An error occurred while creating wood",
